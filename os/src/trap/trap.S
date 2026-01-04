@@ -5,25 +5,14 @@
 .macro LOAD_GP n
     ld x\n, \n*8(sp)
 .endm
-<<<<<<< HEAD
     .section .text.trampoline
-=======
-    .section .text
->>>>>>> ch3
     .globl __alltraps
     .globl __restore
     .align 2
 __alltraps:
     csrrw sp, sscratch, sp
-<<<<<<< HEAD
     # now sp->*TrapContext in user space, sscratch->user stack
     # save other general purpose registers
-=======
-    # now sp->kernel stack, sscratch->user stack
-    # allocate a TrapContext on kernel stack
-    addi sp, sp, -34*8
-    # save general-purpose registers
->>>>>>> ch3
     sd x1, 1*8(sp)
     # skip sp(x2), we will save it later
     sd x3, 3*8(sp)
@@ -34,16 +23,11 @@ __alltraps:
         SAVE_GP %n
         .set n, n+1
     .endr
-<<<<<<< HEAD
     # we can use t0/t1/t2 freely, because they have been saved in TrapContext
-=======
-    # we can use t0/t1/t2 freely, because they were saved on kernel stack
->>>>>>> ch3
     csrr t0, sstatus
     csrr t1, sepc
     sd t0, 32*8(sp)
     sd t1, 33*8(sp)
-<<<<<<< HEAD
     # read user stack from sscratch and save it in TrapContext
     csrr t2, sscratch
     sd t2, 2*8(sp)
@@ -73,25 +57,6 @@ __restore:
     csrw sstatus, t0
     csrw sepc, t1
     # restore general purpose registers except x0/sp/tp
-=======
-    # read user stack from sscratch and save it on the kernel stack
-    csrr t2, sscratch
-    sd t2, 2*8(sp)
-    # set input argument of trap_handler(cx: &mut TrapContext)
-    mv a0, sp
-    call trap_handler
-
-__restore:
-    # now sp->kernel stack(after allocated), sscratch->user stack
-    # restore sstatus/sepc
-    ld t0, 32*8(sp)
-    ld t1, 33*8(sp)
-    ld t2, 2*8(sp)
-    csrw sstatus, t0
-    csrw sepc, t1
-    csrw sscratch, t2
-    # restore general-purpuse registers except sp/tp
->>>>>>> ch3
     ld x1, 1*8(sp)
     ld x3, 3*8(sp)
     .set n, 5
@@ -99,13 +64,6 @@ __restore:
         LOAD_GP %n
         .set n, n+1
     .endr
-<<<<<<< HEAD
     # back to user stack
     ld sp, 2*8(sp)
-=======
-    # release TrapContext on kernel stack
-    addi sp, sp, 34*8
-    # now sp->kernel stack, sscratch->user stack
-    csrrw sp, sscratch, sp
->>>>>>> ch3
     sret

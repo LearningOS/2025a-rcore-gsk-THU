@@ -1,7 +1,4 @@
-<<<<<<< HEAD
 //! Implementation of [`TrapContext`]
-=======
->>>>>>> ch3
 use riscv::register::sstatus::{self, Sstatus, SPP};
 
 #[repr(C)]
@@ -14,15 +11,12 @@ pub struct TrapContext {
     pub sstatus: Sstatus,
     /// Supervisor Exception Program Counter
     pub sepc: usize,
-<<<<<<< HEAD
     /// Token of kernel address space
     pub kernel_satp: usize,
     /// Kernel stack pointer of the current application
     pub kernel_sp: usize,
     /// Virtual address of trap handler entry point in kernel
     pub trap_handler: usize,
-=======
->>>>>>> ch3
 }
 
 impl TrapContext {
@@ -31,7 +25,6 @@ impl TrapContext {
         self.x[2] = sp;
     }
     /// init the trap context of an application
-<<<<<<< HEAD
     pub fn app_init_context(
         entry: usize,
         sp: usize,
@@ -49,15 +42,6 @@ impl TrapContext {
             kernel_satp,  // addr of page table
             kernel_sp,    // kernel stack
             trap_handler, // addr of trap_handler function
-=======
-    pub fn app_init_context(entry: usize, sp: usize) -> Self {
-        let mut sstatus = sstatus::read(); // CSR sstatus
-        sstatus.set_spp(SPP::User); //previous privilege mode: user mode
-        let mut cx = Self {
-            x: [0; 32],
-            sstatus,
-            sepc: entry, // entry point of app
->>>>>>> ch3
         };
         cx.set_sp(sp); // app's user stack pointer
         cx // return initial Trap Context of app

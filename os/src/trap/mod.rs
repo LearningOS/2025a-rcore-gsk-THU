@@ -14,7 +14,6 @@
 
 mod context;
 
-<<<<<<< HEAD
 use crate::config::{TRAMPOLINE, TRAP_CONTEXT_BASE};
 use crate::syscall::syscall;
 use crate::task::{
@@ -22,12 +21,6 @@ use crate::task::{
 };
 use crate::timer::set_next_trigger;
 use core::arch::{asm, global_asm};
-=======
-use crate::syscall::syscall;
-use crate::task::{exit_current_and_run_next, suspend_current_and_run_next};
-use crate::timer::set_next_trigger;
-use core::arch::global_asm;
->>>>>>> ch3
 use riscv::register::{
     mtvec::TrapMode,
     scause::{self, Exception, Interrupt, Trap},
@@ -38,7 +31,6 @@ global_asm!(include_str!("trap.S"));
 
 /// Initialize trap handling
 pub fn init() {
-<<<<<<< HEAD
     set_kernel_trap_entry();
 }
 
@@ -51,13 +43,6 @@ fn set_kernel_trap_entry() {
 fn set_user_trap_entry() {
     unsafe {
         stvec::write(TRAMPOLINE as usize, TrapMode::Direct);
-=======
-    extern "C" {
-        fn __alltraps();
-    }
-    unsafe {
-        stvec::write(__alltraps as usize, TrapMode::Direct);
->>>>>>> ch3
     }
 }
 
@@ -70,19 +55,12 @@ pub fn enable_timer_interrupt() {
 
 /// trap handler
 #[no_mangle]
-<<<<<<< HEAD
 pub fn trap_handler() -> ! {
     set_kernel_trap_entry();
     let cx = current_trap_cx();
     let scause = scause::read(); // get trap cause
     let stval = stval::read(); // get extra value
     // trace!("into {:?}", scause.cause());
-=======
-pub fn trap_handler(cx: &mut TrapContext) -> &mut TrapContext {
-    let scause = scause::read(); // get trap cause
-    let stval = stval::read(); // get extra value
-                               // trace!("into {:?}", scause.cause());
->>>>>>> ch3
     match scause.cause() {
         Trap::Exception(Exception::UserEnvCall) => {
             // jump to next instruction anyway
@@ -90,14 +68,10 @@ pub fn trap_handler(cx: &mut TrapContext) -> &mut TrapContext {
             // get system call return value
             cx.x[10] = syscall(cx.x[17], [cx.x[10], cx.x[11], cx.x[12]]) as usize;
         }
-<<<<<<< HEAD
         Trap::Exception(Exception::StoreFault)
         | Trap::Exception(Exception::StorePageFault)
         | Trap::Exception(Exception::LoadFault)
         | Trap::Exception(Exception::LoadPageFault) => {
-=======
-        Trap::Exception(Exception::StoreFault) | Trap::Exception(Exception::StorePageFault) => {
->>>>>>> ch3
             println!("[kernel] PageFault in application, bad addr = {:#x}, bad instruction = {:#x}, kernel killed it.", stval, cx.sepc);
             exit_current_and_run_next();
         }
@@ -117,7 +91,6 @@ pub fn trap_handler(cx: &mut TrapContext) -> &mut TrapContext {
             );
         }
     }
-<<<<<<< HEAD
     //println!("before trap_return");
     trap_return();
 }
@@ -157,9 +130,7 @@ pub fn trap_from_kernel() -> ! {
     use riscv::register::sepc;
     trace!("stval = {:#x}, sepc = {:#x}", stval::read(), sepc::read());
     panic!("a trap {:?} from kernel!", scause::read().cause());
-=======
-    cx
->>>>>>> ch3
 }
 
+///
 pub use context::TrapContext;

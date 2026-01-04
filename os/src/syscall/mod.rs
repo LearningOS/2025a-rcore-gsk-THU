@@ -24,6 +24,8 @@ const SYSCALL_MUNMAP: usize = 215;
 const SYSCALL_MMAP: usize = 222;
 /// trace syscall
 const SYSCALL_TRACE: usize = 410;
+///
+pub const SYSCALL_ID_UPPER_BOUND: usize = 500;
 
 mod fs;
 mod process;
