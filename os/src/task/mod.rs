@@ -14,7 +14,8 @@ mod switch;
 #[allow(clippy::module_inception)]
 mod task;
 
-use crate::loader::{get_app_data, get_num_app};
+use crate::config::{MAX_APP_NUM, SYSCALL_ID_UPPER_BOUND};
+use crate::loader::{get_num_app, init_app_cx};
 use crate::sync::UPSafeCell;
 use crate::trap::TrapContext;
 use alloc::vec::Vec;

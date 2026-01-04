@@ -1,5 +1,9 @@
 //! Process management syscalls
-use crate::task::{change_program_brk, exit_current_and_run_next, suspend_current_and_run_next};
+use core::ptr;
+use crate::{
+    task::{exit_current_and_run_next, suspend_current_and_run_next, get_current_task_id, get_syscall_cnt, increase_syscall_cnt},
+    timer::get_time_us,
+};
 
 #[repr(C)]
 #[derive(Debug)]
@@ -8,9 +12,13 @@ pub struct TimeVal {
     pub usec: usize,
 }
 
+pub fn update_syscall_cnt(_syscall_id: usize) {
+    increase_syscall_cnt(get_current_task_id(), _syscall_id);
+}
+
 /// task exits and submit an exit code
-pub fn sys_exit(_exit_code: i32) -> ! {
-    trace!("kernel: sys_exit");
+pub fn sys_exit(exit_code: i32) -> ! {
+    trace!("[kernel] Application exited with code {}", exit_code);
     exit_current_and_run_next();
     panic!("Unreachable in sys_exit!");
 }

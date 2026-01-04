@@ -23,8 +23,11 @@
 #![feature(alloc_error_handler)]
 
 #[macro_use]
+<<<<<<< HEAD
 extern crate bitflags;
 #[macro_use]
+=======
+>>>>>>> ch3
 extern crate log;
 
 extern crate alloc;
@@ -32,10 +35,17 @@ extern crate alloc;
 #[macro_use]
 mod console;
 pub mod config;
+<<<<<<< HEAD
 pub mod lang_items;
 mod loader;
 pub mod logging;
 pub mod mm;
+=======
+mod heap_alloc;
+pub mod lang_items;
+mod loader;
+pub mod logging;
+>>>>>>> ch3
 pub mod sbi;
 pub mod sync;
 pub mod syscall;
